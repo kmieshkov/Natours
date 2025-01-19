@@ -1,0 +1,27 @@
+# Node.js dependencies
+node_modules/
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Debug files
+*.swp
+*.swo
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# macOS temporary files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# VS Code settings
+.vscode/
