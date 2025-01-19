@@ -1,0 +1,23 @@
+{
+  "name": "natours",
+  "version": "1.0.0",
+  "description": "Learning Node.js, Express and MongoDB",
+  "homepage": "https://github.com/kmieshkov/Natours#readme",
+  "bugs": {
+    "url": "https://github.com/kmieshkov/Natours/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kmieshkov/Natours.git"
+  },
+  "license": "ISC",
+  "author": "kmieshkov",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
