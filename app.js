@@ -19,7 +19,6 @@ app.get('/api/v1/tours', (req, res) => {
 
 app.get('/api/v1/tours/:id', (req, res) => {
   const id = parseInt(req.params.id);
-
   const tour = tours.find((el) => el.id === id);
 
   if (!tour) {
@@ -48,6 +47,47 @@ app.post('/api/v1/tours', (req, res) => {
       data: {
         tour: newTour,
       },
+    });
+  });
+});
+
+app.patch('/api/v1/tours/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const tour = tours.find((el) => el.id === id);
+
+  // TODO: tour modification
+
+  if (!tour) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Tour not found. Invalid ID',
+    });
+  }
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      tour,
+    },
+  });
+});
+
+app.delete('/api/v1/tours/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const tour = tours.find((el) => el.id !== id);
+  const newTours = tours.filter((el) => el.id !== id);
+
+  if (!tour) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'Tour not found. Invalid ID',
+    });
+  }
+
+  fs.writeFile(toursPath, JSON.stringify(newTours), (err) => {
+    res.status(204).json({
+      status: 'success',
+      data: null,
     });
   });
 });
