@@ -9,6 +9,7 @@ const userRouter = require('./routes/userRoutes');
 
 app.use(morgan('dev'));
 app.use(express.json()); // Modify incoming data
+app.use(express.static(`${__dirname}/public`)); // Serve static files
 
 // Middleware, applies to each request
 app.use((req, res, next) => {
