@@ -101,3 +101,19 @@ exports.deleteTour = async (req, res) => {
     });
   }
 };
+
+exports.deleteAllTours = async (req, res) => {
+  try {
+    await Tour.deleteMany();
+
+    res.status(204).json({
+      status: 'success',
+      data: null,
+    });
+  } catch (error) {
+    res.status(404).json({
+      status: 'fail',
+      message: error,
+    });
+  }
+};
