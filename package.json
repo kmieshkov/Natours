@@ -12,8 +12,10 @@
   },
   "license": "ISC",
   "author": "kmieshkov",
-  "type": "commonjs",
   "main": "app.js",
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "scripts": {
     "start": "nodemon server.js",
     "start:prod": "NODE_ENV=production nodemon server.js",
