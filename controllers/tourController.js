@@ -8,8 +8,39 @@ exports.checkBody = (req, res, next) => {
 
 exports.getAllTours = async (req, res) => {
   try {
-    const tours = await Tour.find();
+    // 1. Build query
+    // 1a. Filtering
+    const { sort, ...queryObj } = req.query;
+    const excludedFields = ['page', 'limit', 'fields'];
+    excludedFields.forEach((el) => delete queryObj[el]);
 
+    // 1b. Advanced filtering
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+
+    // 1c. Init query
+    const query = Tour.find(JSON.parse(queryStr));
+
+    // 2. Sorting
+    if (sort) {
+      const sortBy = sort.split(',').join(' ');
+      query.sort(sortBy);
+    } else {
+      query.sort('-createdAt'); // If sorting not specified - sort by created date
+    }
+
+    // 3. Fileds limiting
+    if (req.query.fields) {
+      const fields = req.query.fields.split(',').join(' ');
+      query.select(fields);
+    } else {
+      query.select('-__v'); // Exclude __v by default
+    }
+
+    // 4. Execute query
+    const tours = await query;
+
+    // Send response
     res.json({
       status: 'success',
       data: {
