@@ -6,6 +6,15 @@ exports.checkBody = (req, res, next) => {
   next();
 };
 
+exports.aliasTopTours = (req, res, next) => {
+  req.query = {
+    limit: 5,
+    sort: 'price,-ratingsAverage',
+  };
+  req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
+  next();
+};
+
 exports.getAllTours = async (req, res) => {
   try {
     // 1. Build query
