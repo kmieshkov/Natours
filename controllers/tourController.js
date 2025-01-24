@@ -174,3 +174,88 @@ exports.getTourStats = async (req, res) => {
     });
   }
 };
+
+// Bussiness issue: see the load for every month, and identify busiest month of th specified year
+exports.getMonthlyPlan = async (req, res) => {
+  try {
+    const year = req.params.year * 1;
+    const plan = await Tour.aggregate([
+      // Split tours for each of startDates
+      {
+        $unwind: '$startDates',
+      },
+      // Filter tours for specified year
+      {
+        $match: {
+          startDates: {
+            $gte: new Date(`${year}-01-01`),
+            $lte: new Date(`${year}-12-31`),
+          },
+        },
+      },
+      // Group by start day, adding tours qty and keeping the name
+      {
+        $group: {
+          _id: { $month: '$startDates' }, // Id reflects the month
+          numTourStart: { $sum: 1 },
+          tours: { $push: '$name' },
+        },
+      },
+      // Add separate field for months
+      {
+        $addFields: { month: '$_id' },
+      },
+      // Remove id
+      {
+        $project: {
+          _id: 0,
+        },
+      },
+      // Sort by month, starting from the busiest one
+      {
+        $sort: { numTourStart: -1 },
+      },
+      // Linit output
+      {
+        $limit: 12,
+      },
+      // Map month number to month name
+      {
+        $addFields: {
+          month: {
+            $arrayElemAt: [
+              [
+                ,
+                'Jan',
+                'Feb',
+                'Mar',
+                'Apr',
+                'May',
+                'Jun',
+                'Jul',
+                'Aug',
+                'Sep',
+                'Oct',
+                'Nov',
+                'Dec',
+              ],
+              '$month',
+            ],
+          },
+        },
+      },
+    ]);
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        plan,
+      },
+    });
+  } catch (error) {
+    res.status(404).json({
+      status: 'fail',
+      message: error,
+    });
+  }
+};
