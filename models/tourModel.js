@@ -111,7 +111,8 @@ tourSchema.post('save', (doc, next) => {
 
 // this keyword points to current query
 // because we're not processing documents, we're processing query
-tourSchema.pre(/^find/, function (next) {
+// regex applies to all queries except ones that include delete
+tourSchema.pre(/^find(?!.*[dD]elete)/, function (next) {
   this.find({ secretTour: { $ne: true } });
   this.start = Date.now();
   next();
