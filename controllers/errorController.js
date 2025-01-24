@@ -32,6 +32,12 @@ const handleCastErrorDB = (err) => {
   return new AppError(message, 400);
 };
 
+const handleDuplicateFiledsDB = (err) => {
+  const value = err.errmsg.match(/"([^"]*)"/g);
+  const message = `Duplicate fields value ${value}. PLease use another value!`;
+  return new AppError(message, 400);
+};
+
 module.exports = (err, req, res, next) => {
   err.statusCode = err.StatusCode || 500;
   err.status = err.status || 'error';
@@ -41,9 +47,16 @@ module.exports = (err, req, res, next) => {
   } else if (process.env.NODE_ENV === 'production') {
     let error = { ...err };
 
+    // Error handle for invalid DB IDs
     if (err.name === 'CastError') {
       error = handleCastErrorDB(err);
     }
+
+    // Error handle for duplicate fields
+    if (err.code === 11000) {
+      error = handleDuplicateFiledsDB(err);
+    }
+
     sendErrorProd(error, res);
   }
 };
