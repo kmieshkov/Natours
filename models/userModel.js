@@ -20,6 +20,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please provide a password'],
       minlength: 8,
+      select: false, // Field password will never be displayed in output when retreiving data
     },
     passwordConfirm: {
       type: String,
@@ -52,6 +53,17 @@ userSchema.pre('save', async function (next) {
   this.passwordConfirm = undefined;
   next();
 });
+
+// Instance method - will be available on all documents of certain collections
+// Method to compare a candidate password with the stored user password
+// 'this' refers to the current document, but we cannot access this.password
+// because it is excluded in the schema by default; hence, we use userPassword.
+userSchema.methods.correctPassword = async function (candidatePassword, userPassword) {
+  // The salt is appended to the hashed password. When you call .compare() on it,
+  // bcrypt will extract the salt and use it to hash the plaintext password.
+  // If the results match then it passes.
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 
 const User = mongoose.model('User', userSchema);
 
