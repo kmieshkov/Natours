@@ -48,7 +48,7 @@ const tourSchema = new mongoose.Schema(
       validate: {
         // Custom validation
         validator: function (val) {
-          // this keyword work only on creating a NEW document
+          // 'this' keyword work only on creating a NEW document
           // function WILL NOT work on update
           return val < this.price;
         },
@@ -95,7 +95,7 @@ tourSchema.virtual('durationWeeks').get(function () {
 
 // Runs before .save() and .create(),
 // but does not work with insertMany() or findOneAndUpdate().
-// this keyword points to the current document
+// 'this' keyword points to the current document
 tourSchema.pre('save', function (next) {
   console.log('Will create slug...');
   this.slug = slugify(this.name, { lower: true });
@@ -109,7 +109,7 @@ tourSchema.post('save', (doc, next) => {
 
 /********* Query middleware *********/
 
-// this keyword points to current query
+// 'this' keyword points to current query
 // because we're not processing documents, we're processing query
 // regex applies to all queries except ones that include delete
 tourSchema.pre(/^find(?!.*[dD]elete)/, function (next) {
@@ -125,7 +125,7 @@ tourSchema.post(/^find/, function (docs, next) {
 
 /********* Aggregation middleware *********/
 
-// this keyword points to current aggregation object
+// 'this' keyword points to current aggregation object
 tourSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
   console.log(this.pipeline());
