@@ -1,5 +1,6 @@
 const express = require('express');
 const tourController = require('../controllers/tourController');
+const authController = require('../controllers/authController');
 
 const router = express.Router();
 
@@ -9,9 +10,9 @@ router.route('/top-5-cheap').get(tourController.aliasTopTours, tourController.ge
 
 router
   .route('/')
-  .get(tourController.getAllTours)
-  .post(tourController.checkBody, tourController.createTour) // Middleware for specific route
-  .delete(tourController.deleteAllTours);
+  .get(authController.protect, tourController.getAllTours)
+  .post(authController.protect, tourController.createTour) // Middleware for specific route
+  .delete(authController.protect, tourController.deleteAllTours);
 
 router
   .route('/:id')

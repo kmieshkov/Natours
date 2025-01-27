@@ -4,7 +4,9 @@
 // - Catches errors and forwards them to Express error-handling middleware via next(err)
 const catchAsync = function (fn) {
   return (req, res, next) => {
-    fn(req, res, next).catch((err) => next(err));
+    fn(req, res, next).catch((err) => {
+      return next(err);
+    });
   };
 };
 
