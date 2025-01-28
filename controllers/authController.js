@@ -1,5 +1,4 @@
 const crypto = require('crypto');
-const bcrypt = require('bcryptjs');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
@@ -46,7 +45,8 @@ exports.signin = catchAsync(async (req, res, next) => {
   }
 
   // 2. Check if user exests && password is correct
-  const user = await User.findOne({ email: email }).select('+password'); // Include password field in the query, as it is excluded by default in the schema
+  // Include password field in the query, as it is excluded by default in the schema
+  const user = await User.findOne({ email: email }).select('+password');
 
   // 3. Check if user exists and verify password
   if (!user || !(await user.correctPassword(password, user.password))) {
@@ -89,15 +89,14 @@ exports.protect = catchAsync(async (req, res, next) => {
 });
 
 // Wrapper for middleware fn to pass arbitrary number of params inside middleware fn
-exports.restrictTo = (...roles) => {
-  return catchAsync(async (req, res, next) => {
+exports.restrictTo = (...roles) =>
+  catchAsync(async (req, res, next) => {
     // Check if user is in allowed user rolses (passed in params)
     if (!roles.includes(req.user.role)) {
       return next(new AppError('You do not have permission to perform this action', 403));
     }
     next();
   });
-};
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   // 1. Get user based on posted email
@@ -114,8 +113,9 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   // 3. Send it back as an email
   const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/reset-password/${resetToken}`;
 
-  const message = `Forgot you password? Submit a request with your new password and password confirm to the reset URL: ${resetURL}.\n
-  If you didn't forgot your password, please ignore this email!`;
+  const message = `Forgot you password?
+    Submit a request with your new password and password confirm to the reset URL: ${resetURL}.\n
+    If you didn't forgot your password, please ignore this email!`;
 
   try {
     await sendEmail({
@@ -179,7 +179,9 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
   await user.save();
-  // User.findByIdAndUpdate won't work as intended: validation works on 'save' and 'create' only and all passsword middleware works only on 'save' events
+  // User.findByIdAndUpdate won't work as intended:
+  // validation works on 'save';
+  // 'create' only and all passsword middleware works only on 'save' events
 
   // 4. Log user in with new password, send JWT
   createAndSendToken(user, 200, res);

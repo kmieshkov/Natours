@@ -68,7 +68,7 @@ userSchema.pre('save', function (next) {
     return next();
   }
 
-  // Subtracting 1 second from passwordChangedAt ensures the timestamp is set before the JWT is issued,
+  // Subtracting 1 second from passwordChangedAt ensures the timestamp is set before JWT is issued,
   // avoiding timing issues where the token appears to be created before the password change
   this.passwordChangedAt = Date.now() - 1000;
   next();
