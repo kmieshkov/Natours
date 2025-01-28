@@ -172,13 +172,13 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
 
   // 2. Check if current password is correct
   if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
-    next(new AppError('Your current password is wrong!', 401));
+    return next(new AppError('Your current password is wrong!', 401));
   }
 
   // 3. Update the password
   user.password = req.body.password;
   user.passwordConfirm = req.body.passwordConfirm;
-  user.save();
+  await user.save();
   // User.findByIdAndUpdate won't work as intended: validation works on 'save' and 'create' only and all passsword middleware works only on 'save' events
 
   // 4. Log user in with new password, send JWT
