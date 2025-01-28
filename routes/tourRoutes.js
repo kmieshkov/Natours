@@ -11,7 +11,11 @@ router.route('/top-5-cheap').get(tourController.aliasTopTours, tourController.ge
 router
   .route('/')
   .get(authController.protect, tourController.getAllTours)
-  .post(authController.protect, tourController.checkBody, tourController.createTour) // Middleware for specific route
+  .post(
+    authController.protect,
+    tourController.checkBody, // Middleware for specific route
+    tourController.createTour,
+  )
   .delete(
     authController.protect,
     authController.restrictTo('lead-guide', 'admin'),
