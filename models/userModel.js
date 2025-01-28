@@ -31,10 +31,12 @@ const userSchema = new mongoose.Schema(
     passwordConfirm: {
       type: String,
       required: [true, 'Please confirm your password'],
-      minlength: 8,
       validate: {
         // Only works on CREATE and SAVE
         validator: function (val) {
+          console.log(`this.password: ${this.password}`);
+          console.log(`val: ${val}`);
+
           return this.password === val;
         },
         message: 'Passwords are not the same',
@@ -60,6 +62,18 @@ userSchema.pre('save', async function (next) {
 
   // Remove passwordConfirm as it's only needed for validation during user creation
   this.passwordConfirm = undefined;
+  next();
+});
+
+userSchema.pre('save', function (next) {
+  // If 'password' property was modified or if it's new - do nothig
+  if (!this.isModified('password') || this.isNew) {
+    return next();
+  }
+
+  // Subtracting 1 second from passwordChangedAt ensures the timestamp is set before the JWT is issued,
+  // avoiding timing issues where the token appears to be created before the password change
+  this.passwordChangedAt = Date.now() - 1000;
   next();
 });
 
@@ -95,9 +109,8 @@ userSchema.methods.createPasswordResetToken = function () {
 
   this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 
-  this.passwordResetExpires = Date.now() + 10 * 60 * 60;
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
 
-  console.log({ resetToken }, this.passwordResetToken);
   return resetToken;
 };
 
