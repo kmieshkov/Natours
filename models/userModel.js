@@ -42,12 +42,25 @@ const userSchema = new mongoose.Schema(
     passwordChangedAt: Date,
     passwordResetToken: String,
     passwordResetExpires: Date,
+    active: {
+      type: Boolean,
+      default: true,
+      select: false,
+    },
   },
   {
     toJSON: { virtuals: true }, // Include virtuals when converting to JSON
     toObject: { virtuals: true }, // Include virtuals when converting to plain objects
   },
 );
+
+/*************** Query middleware *****************************/
+
+// DIsplay only active users for all find methods (e.g. findOne, findByIdAndUpdate, etc.)
+userSchema.pre(/^find/, function (next) {
+  this.find({ active: { $ne: false } });
+  next();
+});
 
 userSchema.pre('save', async function (next) {
   // Only run this function if password was modified
@@ -75,8 +88,8 @@ userSchema.pre('save', function (next) {
 });
 
 /*************** Instance methods *****************************/
-/***** Available on all documents of certain collections ******/
-/***** 'this' refers to the current document ******************/
+// Available on all documents of certain collections
+// 'this' keywords refers to the current document
 
 // Method to compare a candidate password with the stored user password
 // We cannot use 'this' to access this.password because it is excluded in the schema by default;
