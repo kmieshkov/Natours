@@ -2,6 +2,9 @@ const express = require('express');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const hpp = require('hpp');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -31,12 +34,26 @@ app.use('/api', limiter);
 // Body parser, reading data from body into req.body. Limit body to 10 kb
 app.use(express.json({ limnit: '10kb' }));
 
+// Data sanitazation agains NoSQL query injections
+app.use(mongoSanitize());
+
+// Data sanitazation against XSS
+app.use(xss());
+
+// Prevent HTTP parameter polution
+app.use(
+  hpp({
+    // Allow duplicate fields in query params
+    whitelist: ['duration', 'ratingsAverage', 'maxGroupSize', 'difficulty', 'price'],
+  }),
+);
+
 // Serving static files
 app.use(express.static(`${__dirname}/public`));
 
 // Test middleware, applies to each request
 app.use((req, res, next) => {
-  // console.log(req.headers);
+  console.log(req.query);
   console.log('Hello from middleware 🖖');
   req.requestTime = new Date().toISOString();
   next();
