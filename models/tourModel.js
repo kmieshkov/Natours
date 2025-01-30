@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 const validator = require('validator');
+const User = require('./userModel');
 
 const tourSchema = new mongoose.Schema(
   {
@@ -78,6 +79,38 @@ const tourSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    startLocation: {
+      // GeoJSON
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      // longitude, latitude
+      coordinates: [Number],
+      address: String,
+      description: String,
+    },
+    locations: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'],
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
+      },
+    ],
+    // Establish reference between different datasets (guides aka Users, and tours) in Mongoose
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User', // ref to user model
+      },
+    ],
   },
   {
     toJSON: { virtuals: true },
@@ -107,6 +140,17 @@ tourSchema.post('save', (doc, next) => {
   next();
 });
 
+// // Implements embedding 'guides' into the 'tour' document ONLY on 'save'
+// // Guides in the Schema should be type: Array
+// tourSchema.pre('save', async function (next) {
+//   // Array of promises, as findById returns a promise for each guide ID
+//   const guidesPromises = this.guides.map(async (id) => await User.findById(id));
+
+//   // Resolve all promises once they are fulfilled and update the guides field
+//   this.guides = await Promise.all(guidesPromises);
+//   next();
+// });
+
 /********* Query middleware *********/
 
 // 'this' keyword points to current query
@@ -119,6 +163,19 @@ tourSchema.pre(/^find/, function (next) {
 
 tourSchema.post(/^find/, function (docs, next) {
   console.log(`Query took ${Date.now() - this.start} ms`);
+  next();
+});
+
+tourSchema.pre(/^find/, function (next) {
+  // Populate 'guides' field with user data based on ObjectId,
+  // affecting ONLY the query result, NOT the database.
+  // Populate creates a separate query to DB, which may affects performance
+  this.populate({
+    path: 'guides', // filed that needs to be populated
+    select: '-__v -passwordChangedAt', // fields that need to be removed from output
+  });
+  // .populate('guides') - simplier solution if only one field need to be populated
+
   next();
 });
 
