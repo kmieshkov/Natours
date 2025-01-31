@@ -121,7 +121,7 @@ const tourSchema = new mongoose.Schema(
 // A virtual property in Mongoose is a dynamically computed field
 // that is not stored in the database and cannot be used for filtering or querying
 tourSchema.virtual('durationWeeks').get(function () {
-  return this.duration / 7;
+  return this.duration ? this.duration / 7 : undefined;
 });
 
 /********* Document middleware *********/
@@ -167,14 +167,18 @@ tourSchema.post(/^find/, function (docs, next) {
 });
 
 tourSchema.pre(/^find/, function (next) {
-  // Populate 'guides' field with user data based on ObjectId,
-  // affecting ONLY the query result, NOT the database.
-  // Populate creates a separate query to DB, which may affects performance
-  this.populate({
-    path: 'guides', // filed that needs to be populated
-    select: '-__v -passwordChangedAt', // fields that need to be removed from output
-  });
-  // .populate('guides') - simplier solution if only one field need to be populated
+  // If make 'guides to populate ONLY if it's specifically mentioned in a query
+  // OR by default when there is no query on what fields to include
+  if (!this._fields || 'guides' in this._fields) {
+    // Populate 'guides' field with user data based on ObjectId,
+    // affecting ONLY the query result, NOT the database.
+    // Populate creates a separate query to DB, which may affects performance
+    this.populate({
+      path: 'guides', // filed that needs to be populated
+      select: '-__v -passwordChangedAt', // fields that need to be removed from output
+    });
+    // .populate('guides') - simplier solution if only one field need to be populated
+  }
 
   next();
 });
