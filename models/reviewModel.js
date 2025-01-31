@@ -36,14 +36,23 @@ const reviewSchema = new mongoose.Schema(
 /********* Query middleware *********/
 
 reviewSchema.pre(/^find/, function (next) {
-  // Each 'populate' adds a query to DB
+  // // Populate tour and user
+  // // Each 'populate' adds a query to DB
+  // this.populate({
+  //   path: 'tour',
+  //   select: 'name',
+  // }).populate({
+  //   path: 'user',
+  //   select: 'name photo',
+  // });
+
+  // Populate only user as it is included in Tour model
+  // Tour should be excluded to prevent nesting
   this.populate({
-    path: 'tour',
-    select: 'name',
-  }).populate({
     path: 'user',
     select: 'name photo',
   });
+
   next();
 });
 

@@ -124,6 +124,13 @@ tourSchema.virtual('durationWeeks').get(function () {
   return this.duration ? this.duration / 7 : undefined;
 });
 
+// Virtual rpopulate with eferrencing to Reviews model
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour', // name of the filed in the Review model, where ref for this model stored
+  localField: '_id', // connection to the field in current model, that is named 'tour' in the other model
+});
+
 /********* Document middleware *********/
 
 // Runs before .save() and .create(),
