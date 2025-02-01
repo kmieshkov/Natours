@@ -1,7 +1,7 @@
 const express = require('express');
 const tourController = require('../controllers/tourController');
 const authController = require('../controllers/authController');
-const reviewController = require('../controllers/reviewController');
+const reviewRouter = require('./reviewRoutes');
 
 const router = express.Router();
 
@@ -37,12 +37,12 @@ router
     tourController.deleteTour,
   );
 
+// Nested routes
 // POST /tours/<tour-id>/reviews - add review for a certain tour
 // GET /tours/<tour-id>/reviews - get all reviews for a tour
 // GET /tours/<tour-id>/reviews/<review-id> - get a reviews for a certain tour
 
-router
-  .route('/:tourId/reviews')
-  .post(authController.protect, authController.restrictTo('user'), reviewController.createReview);
+// Mountreview routes on this scpecific route
+router.use('/:tourId/reviews', reviewRouter);
 
 module.exports = router;
