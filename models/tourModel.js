@@ -118,6 +118,10 @@ const tourSchema = new mongoose.Schema(
   },
 );
 
+// DB Indexes for specific fields. 1 means ascending order, -1 descending
+tourSchema.index({ price: 1 });
+tourSchema.index({ slug: 1 });
+
 // A virtual property in Mongoose is a dynamically computed field
 // that is not stored in the database and cannot be used for filtering or querying
 tourSchema.virtual('durationWeeks').get(function () {
