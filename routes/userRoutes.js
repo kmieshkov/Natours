@@ -10,18 +10,23 @@ router.post('/signin', authController.signin);
 router.post('/forgot-password', authController.forgotPassword);
 router.patch('/reset-password/:token', authController.resetPassword);
 
-router.patch('/update-my-password', authController.protect, authController.updatePassword);
+// All routes below will be 'protected' since middleware runs in sequence
+router.use(authController.protect);
 
-router.get('/me', authController.protect, userController.getMe, userController.getUser);
-router.patch('/update-me', authController.protect, userController.updateMe);
-router.delete('/delete-me', authController.protect, userController.deleteMe);
+router.patch('/update-my-password', authController.updatePassword);
+
+router.get('/me', userController.getMe, userController.getUser);
+router.patch('/update-me', userController.updateMe);
+router.delete('/delete-me', userController.deleteMe);
+
+router.use(authController.restrictTo('admin'));
 
 router.route('/').get(userController.getAllUsers).post(userController.createUser);
 
 router
   .route('/:id')
   .get(userController.getUser)
-  .patch(authController.protect, authController.restrictTo('admin'), userController.updateUser)
-  .delete(authController.protect, authController.restrictTo('admin'), userController.deleteUser);
+  .patch(userController.updateUser)
+  .delete(userController.deleteUser);
 
 module.exports = router;
