@@ -52,7 +52,6 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
       },
     },
   ]);
-  console.log(stats);
 
   // Updfate ratings only when they're exist in DB, otherwise fallback for default Schema values
   const ratingsQuantity = stats[0]?.nRating || Tour.schema.path('ratingsQuantity').options.default;
