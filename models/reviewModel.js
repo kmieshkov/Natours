@@ -63,6 +63,9 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
   });
 };
 
+// Prevent duplicate reviews. Combination of tour and user always should be unique
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+
 /********* Query middleware *********/
 
 reviewSchema.pre(/^find/, function (next) {
