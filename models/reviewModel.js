@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Tour = require('./tourModel');
 
 const reviewSchema = new mongoose.Schema(
   {
@@ -33,6 +34,32 @@ const reviewSchema = new mongoose.Schema(
   },
 );
 
+/********* Static methods *********/
+
+reviewSchema.statics.calcAverageRatings = async function (tourId) {
+  const stats = await this.aggregate([
+    {
+      $match: { tour: tourId },
+    },
+    {
+      // Without grouping, the result would be an array of individual reviews for the tour
+      $group: {
+        // Grouping all tours together
+        // Since all ratings belong to the same tour, using null instead of tour works the same
+        _id: '$tour',
+        nRating: { $sum: 1 },
+        avgRating: { $avg: '$rating' },
+      },
+    },
+  ]);
+  console.log(stats);
+
+  await Tour.findByIdAndUpdate(tourId, {
+    ratingQuantity: stats[0].nRating,
+    ratingsAverage: stats[0].avgRating,
+  });
+};
+
 /********* Query middleware *********/
 
 reviewSchema.pre(/^find/, function (next) {
@@ -54,6 +81,13 @@ reviewSchema.pre(/^find/, function (next) {
   });
 
   next();
+});
+
+// Middleware with post does not have 'next'
+reviewSchema.post('save', function () {
+  // 'this' point to current document (review)
+  // constructor the model that createed the document
+  this.constructor.calcAverageRatings(this.tour);
 });
 
 const Review = mongoose.model('Review', reviewSchema);
