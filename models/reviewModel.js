@@ -54,9 +54,13 @@ reviewSchema.statics.calcAverageRatings = async function (tourId) {
   ]);
   console.log(stats);
 
+  // Updfate ratings only when they're exist in DB, otherwise fallback for default Schema values
+  const ratingsQuantity = stats[0]?.nRating || Tour.schema.path('ratingsQuantity').options.default;
+  const ratingsAverage = stats[0]?.avgRating || Tour.schema.path('ratingsAverage').options.default;
+
   await Tour.findByIdAndUpdate(tourId, {
-    ratingQuantity: stats[0].nRating,
-    ratingsAverage: stats[0].avgRating,
+    ratingsQuantity,
+    ratingsAverage,
   });
 };
 
@@ -83,11 +87,28 @@ reviewSchema.pre(/^find/, function (next) {
   next();
 });
 
+// Calculate average rating
 // Middleware with post does not have 'next'
-reviewSchema.post('save', function () {
+reviewSchema.post('save', async (doc) => {
   // 'this' point to current document (review)
   // constructor the model that createed the document
-  this.constructor.calcAverageRatings(this.tour);
+  await doc.constructor.calcAverageRatings(doc.tour);
+});
+
+// Pre-middleware: Stores the current review document in tmpReview before executing findOne queries
+// Necessary for findByIdAndUpdate and findByIdAndDelete, but internally they use findOne
+reviewSchema.pre(/^findOneAnd/, async function (next) {
+  this.tmpReview = await this.findOne(this.tour);
+  next();
+});
+
+// Post-middleware: After the query executes, updates avg ratings using the stored tmpReview data
+// Ratings are recalculated when a review is modified with fresh data
+reviewSchema.post(/^findOneAnd/, async function () {
+  if (this.tmpReview) {
+    await this.tmpReview.constructor.calcAverageRatings(this.tmpReview.tour);
+    delete this.tmpReview;
+  }
 });
 
 const Review = mongoose.model('Review', reviewSchema);
