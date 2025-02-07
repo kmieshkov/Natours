@@ -1,11 +1,7 @@
-# Project Title: Natours Backend Clone
+# Project Title: Voyage Express App
 
 ## Project Overview
-This project is a backend-focused web application that replicates the server-side features and functionality of [Natours](https://www.natours.dev/).
-
-The frontend is already implemented and will be reused.
-
-The goal is to build a comprehensive and robust backend application by applying modern web development techniques and technologies, including API development, database integration, and deployment.
+This project focused on building a comprehensive and robust backend-focused application by applying modern web development techniques and technologies, including API development, database integration, and deployment.
 
 ## Tech Stack
 The following technologies will be used to develop this project:
