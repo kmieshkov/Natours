@@ -203,8 +203,24 @@ tourSchema.pre(/^find/, function (next) {
 
 // 'this' keyword points to current aggregation object
 tourSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  // Fixes MongoDB error: "$geoNear must be the first stage in the pipeline after optimization."
+  // If 'geoNear' exists in the aggregation pipeline, insert 'secretTour' at the second position
+  // Otherwise, add 'secretTour' filter at the start of the pipeline.
+
+  const isGeoNearPresentInPipeline = this.pipeline().some((obj) =>
+    Object.keys(obj).some((key) => key.includes('geoNear')),
+  );
+
+  const aggregateFunction = { $match: { secretTour: { $ne: true } } };
+
+  if (isGeoNearPresentInPipeline) {
+    this.pipeline().splice(1, 0, aggregateFunction); // Insert after 'geoNear'
+  } else {
+    this.pipeline().unshift(aggregateFunction); // Add at the start
+  }
+
   console.log(this.pipeline());
+
   next();
 });
 
