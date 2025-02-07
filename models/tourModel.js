@@ -123,6 +123,10 @@ const tourSchema = new mongoose.Schema(
 tourSchema.index({ price: 1 });
 tourSchema.index({ slug: 1 });
 
+// Creates a geospatial index for startLocation, optimizing location-based queries
+// The '2dsphere' index enables calculations on an Earth-like sphere for geospatial data
+tourSchema.index({ startLocation: '2dsphere' });
+
 // A virtual property in Mongoose is a dynamically computed field
 // that is not stored in the database and cannot be used for filtering or querying
 tourSchema.virtual('durationWeeks').get(function () {

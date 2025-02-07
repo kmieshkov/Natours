@@ -5,6 +5,10 @@ const reviewRouter = require('./reviewRoutes');
 
 const router = express.Router();
 
+// Finding tours withing specific radius from specific place
+// /tours-within/30/center/-40.45/mi
+router.route('/tours-within/:distance/center/:latlng/:unit').get(tourController.getToursWithin);
+
 router
   .route('/monthly-plan/:year')
   .get(
