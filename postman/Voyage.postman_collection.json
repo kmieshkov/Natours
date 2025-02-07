@@ -1,0 +1,1282 @@
+{
+	"info": {
+		"_postman_id": "56bcdf22-b8bf-44a0-8369-56a944f2cbc8",
+		"name": "Voyage",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19458236"
+	},
+	"item": [
+		{
+			"name": "Tours",
+			"item": [
+				{
+					"name": "Create New Tour",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "  {\n    \"name\": \"Tour Amazing 100\",\n    \"duration\": 3,\n    \"maxGroupSize\": 12,\n    \"difficulty\": \"easy\",\n    \"ratingsAverage\": 5,\n    \"ratingsQuantity\": 33,\n    \"price\": 1497,\n    \"summary\": \"Tour Amazing\",\n    \"imageCover\": \"tour-9-cover.jpg\",\n    \"secretTour\": false,\n    \"guides\": [\n        \"6796f73a8339b51b7b6beb84\",\n        \"6796f74a8339b51b7b6beb86\"\n    ]\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/tours",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tours"
+							]
+						},
+						"description": "To create a new tour, include the following required fields in the request body:\n\n- **name**: A string between 10 and 40 characters.\n    \n- **duration**: A number representing the tour length in days.\n    \n- **maxGroupSize**: The maximum number of participants.\n    \n- **difficulty**: A string with one of the following values: 'easy', 'medium', or 'difficult'.\n    \n- **price**: The cost of the tour in USD.\n    \n- **summary**: A brief tour description.\n    \n- **imageCover**: The filename of the tour’s main image.\n    \n- **startLocation**: An object detailing the starting location. Coordinates are required.\n    \n- **locations**: An array of objects describing all tour stops. Coordinates are required.\n    \n\n**Note:** In both `startLocation` and `locations`, coordinates must be in the format `[longitude, latitude]`, with longitude as the first value."
+					},
+					"response": []
+				},
+				{
+					"name": "Get One Tour by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/tours/:id",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tours",
+								":id"
+							],
+							"query": [
+								{
+									"key": "review",
+									"value": "1",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5c88fa8cf4afda39709c2955"
+								}
+							]
+						},
+						"description": "To update a tour, include the tour ID and provide the new data in the body (select 'raw' and 'JSON' in Postman).\n\nIf you need to update images or the image cover, use form data instead of raw in the body. Please refer to this example. Note that only JPG, JPEG, and GIF images are accepted (these will be converted to JPEG).\n\nAdditionally, only users with the admin or lead guide role are authorized to update tours."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Tours",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/api/v1/tours?sort=ratingsQuantity",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tours"
+							],
+							"query": [
+								{
+									"key": "difficulty",
+									"value": "easy",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "3",
+									"disabled": true
+								},
+								{
+									"key": "duration[gte]",
+									"value": "5",
+									"disabled": true
+								},
+								{
+									"key": "price[lt]",
+									"value": "1500",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "price,ratingsAverage",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "4",
+									"disabled": true
+								},
+								{
+									"key": "sort",
+									"value": "ratingsQuantity"
+								}
+							]
+						},
+						"description": "### **Get All Tours**\n\nUse this endpoint to retrieve all tours stored in the database, including their reviews and guides by default:\n\n**`GET /api/v1/tours/`**\n\n### **Query Features**\n\n#### **1) Filtering**\n\nYou can filter tours based on any property using query parameters.\n\n**Example:**\n\n``` plaintext\n/api/v1/tours/?difficulty=easy&duration[gte]=5\n\n ```\n\nThis retrieves all tours with an **easy** difficulty and a duration of **at least 5 days**.\n\n#### **2) Sorting**\n\nSort results by one or more fields in ascending order (default) or descending order (prefix with `-`).\n\n**Example:**\n\n``` plaintext\n/api/v1/tours/?sort=-price,ratingsAverage\n\n ```\n\nThis sorts tours by **highest price** first. If multiple tours have the same price, they will be sorted by **lower ratingsAverage**.\n\n#### **3) Limiting Fields**\n\nChoose which tour properties to include or exclude using the `fields` parameter.\n\n**Examples:**\n\n``` plaintext\n/api/v1/tours/?fields=-startLocation,-ratingsAverage\n\n ```\n\nReturns all tours **without** `startLocation` and `ratingsAverage`.\n\n``` plaintext\n/api/v1/tours/?fields=name\n\n ```\n\nReturns **only tour names**.\n\n#### **4) Pagination**\n\nControl how many results to retrieve per page using `page` and `limit`.\n\n**Examples:**\n\n``` plaintext\n/api/v1/tours/?page=1&limit=3\n\n ```\n\nReturns the **first 3 tours**.\n\n``` plaintext\n/api/v1/tours/?page=2&limit=4\n\n ```\n\nReturns **tours 5-8**.\n\n### **Combining Filters**\n\nYou can combine multiple filters for precise queries.\n\n**Example:**\n\n``` plaintext\n/api/v1/tours/?difficulty=easy&price[lte]=1500&sort=price&page=1&limit=2\n\n ```\n\nThis fetches the **first 2 easy tours** with a **price ≤ 1500**, sorted by the **lowest price**."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Tour",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"guides\": [\n        \"6796f73a8339b51b7b6beb84\",\n        \"6796f74a8339b51b7b6beb86\",\n        \"67984e481ea963921501b68a\"\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/tours/:id",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tours",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5c88fa8cf4afda39709c296c"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete All Tours",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/tours",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tours"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Top 5 Cheap Tours",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/tours/top-5-cheap",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tours",
+								"top-5-cheap"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Tour Stats",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/tours/tour-stats",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tours",
+								"tour-stats"
+							]
+						},
+						"description": "Get Tour Stats Based on Difficulty\n\nThis route allows you to retrieve stats for tours based on their difficulty (Easy, Medium, Hard). The following statistics will be provided for each difficulty:\n\n- **numTours**: Total number of tours\n    \n- **numRatings**: Total number of ratings\n    \n- **avgRating**: Average rating of the tours\n    \n- **avgPrice**: Average price of the tours\n    \n- **minPrice**: Minimum price of the tours\n    \n- **maxPrice**: Maximum price of the tours\n    \n\nYou can compare the stats of easy tours with medium and hard tours for better insights."
+					},
+					"response": []
+				},
+				{
+					"name": "Monthly Plan",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/tours/monthly-plan/:year",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tours",
+								"monthly-plan",
+								":year"
+							],
+							"variable": [
+								{
+									"key": "year",
+									"value": "2021"
+								}
+							]
+						},
+						"description": "Get Tours Starting in a Given Year\n\nOnly admins, guides, and lead guides have access to this route.\n\nThe response will show all tours starting in the specified year, nicely organized by the month they start."
+					},
+					"response": []
+				},
+				{
+					"name": "Geospatial Tour Find (Tours Within Radius)",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/tours/tours-within/:distance/center/:latlng/:unit",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tours",
+								"tours-within",
+								":distance",
+								"center",
+								":latlng",
+								":unit"
+							],
+							"variable": [
+								{
+									"key": "distance",
+									"value": "233"
+								},
+								{
+									"key": "latlng",
+									"value": "34.0392578,-118.333455",
+									"description": "Los Angeles"
+								},
+								{
+									"key": "unit",
+									"value": "mi"
+								}
+							]
+						},
+						"description": "To retrieve tours with a `startLocation` within a given radius, use the following route:\n\n**`/tours-within/:distance/center/:latlng/unit/:unit`**\n\n- **`:distance`** – The radius of your search area.\n    \n- **`:latlng`** – The latitude and longitude of the center point, separated by a comma (e.g., `34.0522,-118.2437`).\n    \n- **`:unit`** – The unit of measurement (`km` for kilometers or `mi` for miles)."
+					},
+					"response": []
+				},
+				{
+					"name": "Geospatial Distances",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/tours/distances/:latlng/unit/:unit",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tours",
+								"distances",
+								":latlng",
+								"unit",
+								":unit"
+							],
+							"variable": [
+								{
+									"key": "latlng",
+									"value": "34.0392578,-118.333455",
+									"description": "Los Angeles"
+								},
+								{
+									"key": "unit",
+									"value": "mi"
+								}
+							]
+						},
+						"description": "### **Get Tours by Distance**\n\nRetrieve tours sorted from **nearest to farthest** from a specified location. The response includes the **distance** between each tour and the provided location.\n\n**`GET /api/v1/tours/distances/:latlng/unit/:unit`**\n\n#### **1) Specify a Location**\n\nReplace `:latlng` with the **latitude** and **longitude** of the starting point, separated by a comma.\n\n#### **2) Choose a Distance Unit**\n\nReplace `:unit` with either:\n\n- **`km`** → Kilometers (default)\n    \n- **`mi`** → Miles\n    \n\n**Example Usage:**\n\n```\n/api/v1/tours/distances/34.0522,-118.2437/unit/mi\n\n ```\n\nRetrieves all tours sorted by **proximity to Los Angeles, CA**, with distances in **miles**.\n\n```\n/api/v1/tours/distances/51.5074,-0.1278/unit/km\n\n ```\n\nRetrieves all tours sorted by **proximity to London, UK**, with distances in **kilometers**."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get All Users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/users?role=user",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users"
+							],
+							"query": [
+								{
+									"key": "role",
+									"value": "user"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get One User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/users/:id",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						},
+						"description": "Use this endpoint to retrieve all the users stored in the database. Only admins have access to get all users.\n\n## Query Features:\n\n1) **FILTERING**  \nYou can filter by any user property using the following operators: `gte`, `ft`, `lte`, and `lt`.\n\nExample:  \n`api/v1/users/?role=guide`  \nThis will return all users whose role is 'guide'.\n\n2) **SORTING**  \nUse the `sort` parameter to sort by one or more properties. By default, sorting is in ascending order. Use a minus sign (`-`) before the property name to sort in descending order.\n\nExample:  \n`api/v1/users/?sort=name`  \nThis will return users sorted alphabetically by name (A to Z).  \nTo sort from Z to A, use: `api/v1/users/?sort=-name`.\n\n3) **LIMIT FIELDS**  \nYou can specify the user properties you want to retrieve using the `fields` parameter.\n\nExample:  \n`api/v1/users/?fields=email`  \nThis will return all users, but only their email addresses.\n\n4) **PAGINATE**  \nOrganize the users into pages by specifying the `page` and `limit` parameters.\n\nExample:  \n`api/v1/users/?page=3&limit=5`  \nThis will return users 11-15.\n\n`api/v1/users/?page=2&limit=10`  \nThis will return users 11-20.\n\n## Combining Filters\n\nYou can combine filters like sorting and pagination. For example, the following query sorts users alphabetically by name (A to Z) and returns page 2 with a limit of 2 users:\n\n`api/v1/users/?page=2&limit=2&sort=name`"
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"delete-me\",\n    \"email\": \"delete-me@mailinator.com\",\n    \"password\": \"qwerty12345\",\n    \"passwordConfirm\": \"qwerty12345\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/users",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"updated-name\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/users/:id",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "6796f646c9718619c7529c94"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/users/:id",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Me",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"admin\",\n    \"role\": \"user\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/users/update-me",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"update-me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Me (Deactivates User)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/users/delete-me",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"delete-me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/users/me",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"me"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Reset Password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"jwt\", pm.response.json().token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"password\": \"qwerty12345\",\n    \"passwordConfirm\": \"qwerty12345\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/users/reset-password/:token",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"reset-password",
+								":token"
+							],
+							"variable": [
+								{
+									"key": "token",
+									"value": "019087dcbddf5ba2f0f811afbcf089c1655f2b436fa8cbfc94fcba0a128d5d69"
+								}
+							]
+						},
+						"description": "This is the link that was sent to your email (it is different each time you request a password reset).\n\nSubmit **password** and **passwordConfirm** in the body of the request to reset your password, and you'll be logged in automatically.\n\nIf 10 minutes have passed since you requested to reset your password, the link will no longer work, and you'll need to request a new one."
+					},
+					"response": []
+				},
+				{
+					"name": "Forgot Password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@mailinator.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/users/forgot-password",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"forgot-password"
+							]
+						},
+						"description": "Send your email in the body of this request as 'raw' and 'JSON'. You will immediately receive an email with a link to reset your password. The link will expire in 10 minutes, so please act quickly.\n\nMake sure the Postman environment is set to **Prod: Voyage** for this request to work."
+					},
+					"response": []
+				},
+				{
+					"name": "Signin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"jwt\", pm.response.json().token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"loulou@example.com\",\n    \"password\": \"{{password}}\"\n}\n// {\n//     \"email\": \"admin@voyage.ico\",\n//     \"password\": \"{{password}}\"\n// }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/users/signin",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Signup",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"jwt\", pm.response.json().token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"<div>user-test</div>\",\n    \"email\": \"yser-test@mailinator.com\",\n    \"password\": \"qwerty12345\",\n    \"passwordConfirm\": \"qwerty12345\",\n    \"role\": \"user\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/users/signup",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"signup"
+							]
+						},
+						"description": "Sign up by providing your name, email, and password. You can set your profile picture later.\n\n- The email must be unique (it should not have been used to create an account before).\n    \n- You will receive a welcome email upon successful registration."
+					},
+					"response": []
+				},
+				{
+					"name": "Update My Password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"var data = pm.response.json();",
+									"if (data.token) {",
+									"    pm.environment.set(\"jwt\", data.token);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"passwordCurrent\": \"qwerty12345\",\n    \"password\": \"admin12345\",\n    \"passwordConfirm\": \"admin12345\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/users/update-my-password",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"update-my-password"
+							]
+						},
+						"description": "Update your password while you still remember it. To use this route, you must be logged in.\n\nSend the following data in the body:\n\n- **passwordCurrent**: Your current password (the one you just used to log in).\n    \n- **password**: Your new password.\n    \n- **passwordConfirm**: Confirm your new password."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Reviews",
+			"item": [
+				{
+					"name": "Get One Review",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/reviews/:id",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "67a430a2ce3f3d9621b3eaef"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Reviews",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/reviews?rating=4",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews"
+							],
+							"query": [
+								{
+									"key": "rating",
+									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Review",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.response.json();",
+									"if (data.token) {",
+									"    pm.environment.set(\"jwt\", data.token);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"review\": \"Amazing tour!!!\",\n    \"rating\": 5,\n    \"tour\": \"679af793abde1d1f7d628051\",\n    \"user\": \"6796f646c9718619c7529c94\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/reviews",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Review",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.response.json();",
+									"if (data.token) {",
+									"    pm.environment.set(\"jwt\", data.token);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rating\": 4,\n    \"review\": \"NICE TOUR\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/reviews/:id",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "67a4412c0fb0e7adc7ec4fa7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Review",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/reviews/:id",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"reviews",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "67a43f6f0fb0e7adc7ec4f78"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Tours/Reviews",
+			"item": [
+				{
+					"name": "Create Review (Nested Request)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var data = pm.response.json();",
+									"if (data.token) {",
+									"    pm.environment.set(\"jwt\", data.token);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"review\": \"AVERAGE TOUR\",\n    \"rating\": 3\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/api/v1/tours/:tourId/reviews",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tours",
+								":tourId",
+								"reviews"
+							],
+							"variable": [
+								{
+									"key": "tourId",
+									"value": "5c88fa8cf4afda39709c2955"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Reviews For Specific Tour",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/tours/:tourId/reviews",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"tours",
+								":tourId",
+								"reviews"
+							],
+							"query": [
+								{
+									"key": "rating",
+									"value": "4",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "tourId",
+									"value": "5c88fa8cf4afda39709c2955"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
