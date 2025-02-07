@@ -1,14 +1,14 @@
 {
-  "name": "natours",
+  "name": "voyage",
   "version": "1.0.0",
   "description": "Learning Node.js, Express and MongoDB",
-  "homepage": "https://github.com/kmieshkov/Natours#readme",
+  "homepage": "https://github.com/kmieshkov/Voyage#readme",
   "bugs": {
-    "url": "https://github.com/kmieshkov/Natours/issues"
+    "url": "https://github.com/kmieshkov/Voyage/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kmieshkov/Natours.git"
+    "url": "git+https://github.com/kmieshkov/Voyage.git"
   },
   "license": "ISC",
   "author": "kmieshkov",
