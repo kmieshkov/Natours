@@ -572,6 +572,16 @@
 				{
 					"name": "Delete User",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"url": {
@@ -588,7 +598,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": ""
+									"value": "67a69e0f1f20d06bd51f53a4"
 								}
 							]
 						}
@@ -792,7 +802,7 @@
 								"forgot-password"
 							]
 						},
-						"description": "Send your email in the body of this request as 'raw' and 'JSON'. You will immediately receive an email with a link to reset your password. The link will expire in 10 minutes, so please act quickly.\n\nMake sure the Postman environment is set to **Prod: Voyage** for this request to work."
+						"description": "Send your email in the body of this request as 'raw' and 'JSON'. You will immediately receive an email with a link to reset your password. The link will expire in 10 minutes, so please act quickly.\n"
 					},
 					"response": []
 				},
@@ -818,7 +828,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"loulou@example.com\",\n    \"password\": \"{{password}}\"\n}\n// {\n//     \"email\": \"admin@voyage.ico\",\n//     \"password\": \"{{password}}\"\n// }",
+							"raw": "// {\n//     \"email\": \"loulou@example.com\",\n//     \"password\": \"{{password}}\"\n// }\n{\n    \"email\": \"admin@voyage.io\",\n    \"password\": \"{{password}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
