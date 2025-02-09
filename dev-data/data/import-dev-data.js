@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const Tour = require('../../models/tourModel');
@@ -22,9 +23,9 @@ mongoose
 
 // READ JSON FILE
 
-const tours = JSON.parse(fs.readFileSync(`${__dirname}/tours.json`, 'utf-8'));
-const users = JSON.parse(fs.readFileSync(`${__dirname}/users.json`, 'utf-8'));
-const reviews = JSON.parse(fs.readFileSync(`${__dirname}/reviews.json`, 'utf-8'));
+const tours = JSON.parse(fs.readFileSync(path.join(__dirname, 'tours.json'), 'utf-8'));
+const users = JSON.parse(fs.readFileSync(path.join(__dirname, 'users.json'), 'utf-8'));
+const reviews = JSON.parse(fs.readFileSync(path.join(__dirname, 'reviews.json'), 'utf-8'));
 
 // IMPORT DATA INTO DATABASE
 const importData = async () => {
