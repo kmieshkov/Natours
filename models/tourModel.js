@@ -133,7 +133,7 @@ tourSchema.virtual('durationWeeks').get(function () {
   return this.duration ? this.duration / 7 : undefined;
 });
 
-// Virtual rpopulate with eferrencing to Reviews model
+// Virtual populate with referrencing to Reviews model
 tourSchema.virtual('reviews', {
   ref: 'Review',
   foreignField: 'tour', // name of the filed in the Review model, where ref for this model stored
