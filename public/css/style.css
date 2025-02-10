@@ -1322,3 +1322,12 @@ body {
   -webkit-transform: translateY(-2px);
   transform: translateY(-2px);
 }
+
+.reviews::-webkit-scrollbar {
+  height: 0.75rem;
+}
+
+.reviews::-webkit-scrollbar-thumb {
+  background: rgb(47, 136, 93);
+  border-radius: 10px;
+}
