@@ -24,8 +24,14 @@ exports.getTour = catchAsync(async (req, res, next) => {
   // 2. Build template - done it /views/tour.pug
   // 3. Render template using data from step #1
 
-  res.status(200).render('tour', {
-    title: tour.name,
-    tour,
-  });
+  res
+    .status(200)
+    .set(
+      'Content-Security-Policy',
+      'connect-src https://*.tiles.mapbox.com https://api.mapbox.com https://events.mapbox.com',
+    )
+    .render('tour', {
+      title: `${tour.name} Tour`,
+      tour,
+    });
 });
