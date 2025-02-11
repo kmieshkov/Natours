@@ -23,6 +23,7 @@ config.env
 ._*
 .Spotlight-V100
 .Trashes
+.cache
 
 # VS Code settings
 .vscode/
