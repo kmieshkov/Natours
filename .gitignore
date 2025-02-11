@@ -23,7 +23,11 @@ config.env
 ._*
 .Spotlight-V100
 .Trashes
+
+# Bundler files
 .cache
+*.map
+bundle.js
 
 # VS Code settings
 .vscode/
