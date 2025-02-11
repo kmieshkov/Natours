@@ -15,13 +15,13 @@ const signToken = function (id) {
 const createAndSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
   const cookieOptions = {
-    // days in ms
+    // Days in ms
     expiresIn: new Date(Date.now() + process.env.JWT_EXPIRES_IN * 24 * 60 * 60 * 1000),
 
-    // cookie cannot be accessed or modified in any way by the browser
+    // Cookie cannot be accessed or modified in any way by the browser
     httpOnly: true,
 
-    // cookie only will be sent in encypted connections - https
+    // Cookie only will be sent in encypted connections - https
     secure: process.env.NODE_ENV === 'production',
   };
 
@@ -73,6 +73,14 @@ exports.signin = catchAsync(async (req, res, next) => {
   createAndSendToken(user, 200, res);
 });
 
+exports.logout = (req, res) => {
+  res.clearCookie('jwt');
+
+  res.status(200).json({
+    status: 'success',
+  });
+};
+
 exports.protect = catchAsync(async (req, res, next) => {
   // 1. Get token and check if it exists
   let token;
@@ -110,24 +118,28 @@ exports.protect = catchAsync(async (req, res, next) => {
 exports.isLoggedIn = catchAsync(async (req, res, next) => {
   const token = req.cookies.jwt;
   if (token) {
-    // 1. Verify token
-    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+    try {
+      // 1. Verify token
+      const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
-    // 2. Check if user who is trying to acces the rout is still exists
-    const currentUser = await User.findById(decoded.id);
+      // 2. Check if user who is trying to acces the rout is still exists
+      const currentUser = await User.findById(decoded.id);
 
-    if (!currentUser) {
+      if (!currentUser) {
+        return next();
+      }
+
+      // 3. Check if user changed password after JWT was issued
+      if (currentUser.changedPasswordAfter(decoded.iat)) {
+        return next();
+      }
+
+      // There is a Logged In user
+      res.locals.user = currentUser; // Each .pug will have access to 'locals'
+      return next();
+    } catch (error) {
       return next();
     }
-
-    // 3. Check if user changed password after JWT was issued
-    if (currentUser.changedPasswordAfter(decoded.iat)) {
-      return next();
-    }
-
-    // There is a Logged In user
-    res.locals.user = currentUser; // Each .pug will have access to 'locals'
-    return next();
   }
   next();
 });

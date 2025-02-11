@@ -47,4 +47,4 @@ export const displayMap = (locations) => {
       rihgt: 100,
     },
   });
-}
+};
