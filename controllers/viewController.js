@@ -1,6 +1,7 @@
 const Tour = require('../models/tourModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const User = require('../models/userModel');
 
 exports.getOverview = catchAsync(async (req, res, next) => {
   // 1. Get tour data from collection
@@ -45,3 +46,24 @@ exports.getAccount = (req, res) => {
     title: 'Your account',
   });
 };
+
+exports.updateUserData = catchAsync(async (req, res, next) => {
+  const updatedUser = await User.findByIdAndUpdate(
+    req.user.id,
+    {
+      name: req.body.name,
+      email: req.body.email,
+    },
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
+
+  // Have to pass updated user therwise user will be taken from protected middleware
+  // Aad data won't be updated on the page
+  res.status(200).render('account', {
+    title: 'Your account',
+    user: updatedUser,
+  });
+});
