@@ -45,6 +45,7 @@ if (loginForm) {
 }
 
 if (userDataForm) {
+  // Submit form
   userDataForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const form = new FormData();
@@ -53,19 +54,20 @@ if (userDataForm) {
     form.append('photo', photo.files[0]);
     await updateSettings(form, 'data');
   });
-}
 
-photo.addEventListener('change', (e) => {
-  e.preventDefault();
-  const newImgFile = e.target.files?.[0];
-  if (!newImgFile?.type.startsWith('image/')) return;
-  const reader = new FileReader();
-  reader.addEventListener('load', () => {
-    userImg.setAttribute('src', reader.result);
+  // Update image
+  photo.addEventListener('change', (e) => {
+    e.preventDefault();
+    const newImgFile = e.target.files?.[0];
+    if (!newImgFile?.type.startsWith('image/')) return;
+    const reader = new FileReader();
+    reader.addEventListener('load', () => {
+      userImg.setAttribute('src', reader.result);
+    });
+
+    reader.readAsDataURL(newImgFile);
   });
-
-  reader.readAsDataURL(newImgFile);
-});
+}
 
 if (userPasswordForm) {
   userPasswordForm.addEventListener('submit', async (e) => {
