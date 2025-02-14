@@ -68,8 +68,8 @@ app.use(
 
 // Test middleware, applies to each request
 app.use((req, res, next) => {
-  // console.log(req.query);
-  console.log('Cookies 🍪:', req.cookies);
+  // console.log('Query ＞:'. req.query);
+  // console.log('Cookies 🍪:', req.cookies);
   req.requestTime = new Date().toISOString();
   next();
 });
