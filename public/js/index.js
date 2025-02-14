@@ -12,6 +12,8 @@ const loginForm = document.querySelector('.form--login');
 const logoutBtn = document.querySelector('.nav__el--logout');
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
+const photo = document.getElementById('photo');
+const userImg = document.querySelector('.form__user-photo');
 
 // DELEGATION
 if (sectionMap && mapbox) {
@@ -45,11 +47,25 @@ if (loginForm) {
 if (userDataForm) {
   userDataForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    await updateSettings({ name, email }, 'data');
+    const form = new FormData();
+    form.append('name', document.getElementById('name').value);
+    form.append('email', document.getElementById('email').value);
+    form.append('photo', photo.files[0]);
+    await updateSettings(form, 'data');
   });
 }
+
+photo.addEventListener('change', (e) => {
+  e.preventDefault();
+  const newImgFile = e.target.files?.[0];
+  if (!newImgFile?.type.startsWith('image/')) return;
+  const reader = new FileReader();
+  reader.addEventListener('load', () => {
+    userImg.setAttribute('src', reader.result);
+  });
+
+  reader.readAsDataURL(newImgFile);
+});
 
 if (userPasswordForm) {
   userPasswordForm.addEventListener('submit', async (e) => {
