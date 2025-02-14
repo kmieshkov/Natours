@@ -52,8 +52,6 @@ exports.signup = catchAsync(async (req, res, next) => {
   await new Email(newUser, url).sendWelcome();
 
   createAndSendToken(newUser, 201, res);
-
-  next();
 });
 
 exports.signin = catchAsync(async (req, res, next) => {
