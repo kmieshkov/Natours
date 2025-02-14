@@ -46,14 +46,14 @@ exports.signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
-    passwordChangedAt: req.body.passwordChangedAt,
-    role: req.body.role,
   });
 
   const url = `${req.protocol}://${req.get('host')}/profile`;
   await new Email(newUser, url).sendWelcome();
 
   createAndSendToken(newUser, 201, res);
+
+  next();
 });
 
 exports.signin = catchAsync(async (req, res, next) => {
@@ -100,7 +100,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   // 2. Token verification
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
-  // 3. Check if user who is trying to acces the rout is still exists
+  // 3. Check if user who is trying to acces the route still exists
   const currentUser = await User.findById(decoded.id);
 
   if (!currentUser) {
@@ -130,14 +130,14 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
       // 2. Check if user who is trying to acces the rout is still exists
       const currentUser = await User.findById(decoded.id);
 
-      if (!currentUser) {
-        return next();
-      }
+      // if (!currentUser) {
+      //   return next();
+      // }
 
-      // 3. Check if user changed password after JWT was issued
-      if (currentUser.changedPasswordAfter(decoded.iat)) {
-        return next();
-      }
+      // // 3. Check if user changed password after JWT was issued
+      // if (currentUser.changedPasswordAfter(decoded.iat)) {
+      //   return next();
+      // }
 
       // There is a Logged In user
       res.locals.user = currentUser; // Each .pug will have access to 'locals'
@@ -156,11 +156,12 @@ exports.restrictTo = (...roles) =>
     if (!roles.includes(req.user.role)) {
       return next(new AppError('You do not have permission to perform this action', 403));
     }
+
     next();
   });
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
-  // 1. Get user based on posted email
+  // 1. Get user based on POSTed email
   const user = await User.findOne({ email: req.body.email });
   if (!user) {
     return next(new AppError('There is no user with provided email', 404));
@@ -174,27 +175,20 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   // 3. Send it back as an email
   const resetURL = `${req.protocol}://${req.get('host')}/api/v1/users/reset-password/${resetToken}`;
 
-  const message = `Forgot you password?
-    Submit a request with your new password and password confirm to the reset URL: ${resetURL}.\n
-    If you didn't forgot your password, please ignore this email!`;
-
   try {
-    // await Email({
-    //   email: user.email,
-    //   subject: 'Your password reset token (valid for 10 minutes)',
-    //   message,
-    // });
+    await new Email(user, resetURL).sendPasswordReset();
 
     res.status(200).json({
       status: 'success',
       message: 'Token sent to email!',
     });
   } catch (error) {
+    console.log(error);
     user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save({ validateBeforeSave: false });
 
-    return next(new AppError('There was an error sending the email. Try again later!', 500));
+    return next(new AppError('There was an error sending the email. Try again later!'), 500);
   }
 });
 
