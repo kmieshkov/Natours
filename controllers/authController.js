@@ -46,6 +46,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     email: req.body.email,
     password: req.body.password,
     passwordConfirm: req.body.passwordConfirm,
+    passwordChangedAt: req.body.passwordChangedAt,
   });
 
   const url = `${req.protocol}://${req.get('host')}/profile`;
@@ -96,7 +97,11 @@ exports.protect = catchAsync(async (req, res, next) => {
     return next(new AppError('You are not logged in! Please login to get access', 401));
   }
   // 2. Token verification
-  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET).catch(() => false);
+
+  if (!decoded) {
+    return next(new AppError('Error decoding JWT', 401));
+  }
 
   // 3. Check if user who is trying to acces the route still exists
   const currentUser = await User.findById(decoded.id);
@@ -123,7 +128,11 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
   if (token) {
     try {
       // 1. Verify token
-      const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+      const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET).catch(() => false);
+
+      if (!decoded) {
+        return next();
+      }
 
       // 2. Check if user who is trying to acces the rout is still exists
       const currentUser = await User.findById(decoded.id);
