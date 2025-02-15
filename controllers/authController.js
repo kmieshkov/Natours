@@ -128,14 +128,14 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
       // 2. Check if user who is trying to acces the rout is still exists
       const currentUser = await User.findById(decoded.id);
 
-      // if (!currentUser) {
-      //   return next();
-      // }
+      if (!currentUser) {
+        return next();
+      }
 
-      // // 3. Check if user changed password after JWT was issued
-      // if (currentUser.changedPasswordAfter(decoded.iat)) {
-      //   return next();
-      // }
+      // 3. Check if user changed password after JWT was issued
+      if (currentUser.changedPasswordAfter(decoded.iat)) {
+        return next();
+      }
 
       // There is a Logged In user
       res.locals.user = currentUser; // Each .pug will have access to 'locals'
