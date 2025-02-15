@@ -148,6 +148,7 @@ exports.isLoggedIn = catchAsync(async (req, res, next) => {
 
       // There is a Logged In user
       res.locals.user = currentUser; // Each .pug will have access to 'locals'
+      req.user = currentUser;
     } catch (error) {
       return next();
     }
