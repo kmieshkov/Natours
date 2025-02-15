@@ -31,3 +31,4 @@ bundle.js
 
 # VS Code settings
 .vscode/
+.vercel
