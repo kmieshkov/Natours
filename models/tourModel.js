@@ -146,13 +146,13 @@ tourSchema.virtual('reviews', {
 // but does not work with insertMany() or findOneAndUpdate().
 // 'this' keyword points to the current document
 tourSchema.pre('save', function (next) {
-  console.log('Will create slug...');
+  // console.log('Will create slug...');
   this.slug = slugify(this.name, { lower: true });
   next();
 });
 
 tourSchema.post('save', (doc, next) => {
-  console.log('After save document middleware...');
+  // console.log('After save document middleware...');
   next();
 });
 
@@ -219,7 +219,7 @@ tourSchema.pre('aggregate', function (next) {
     this.pipeline().unshift(aggregateFunction); // Add at the start
   }
 
-  console.log(this.pipeline());
+  // console.log(this.pipeline());
 
   next();
 });
