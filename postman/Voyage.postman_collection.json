@@ -181,13 +181,39 @@
 						"method": "PATCH",
 						"header": [],
 						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"guides\": [\n        \"6796f73a8339b51b7b6beb84\",\n        \"6796f74a8339b51b7b6beb86\",\n        \"67984e481ea963921501b68a\"\n    ]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "imageCover",
+									"type": "file",
+									"src": "/Users/kmieshkov/projects/complete-node-bootcamp/4-natours/starter/dev-data/img/new-tour-1.jpg"
+								},
+								{
+									"key": "price",
+									"value": "997",
+									"type": "text"
+								},
+								{
+									"key": "images",
+									"type": "file",
+									"src": "/Users/kmieshkov/projects/complete-node-bootcamp/4-natours/starter/dev-data/img/new-tour-2.jpg"
+								},
+								{
+									"key": "images",
+									"type": "file",
+									"src": "/Users/kmieshkov/projects/complete-node-bootcamp/4-natours/starter/dev-data/img/new-tour-3.jpg"
+								},
+								{
+									"key": "images",
+									"type": "file",
+									"src": "/Users/kmieshkov/projects/complete-node-bootcamp/4-natours/starter/dev-data/img/new-tour-4.jpg"
+								},
+								{
+									"key": "test-test",
+									"value": "test-test",
+									"type": "text"
 								}
-							}
+							]
 						},
 						"url": {
 							"raw": "{{URL}}/api/v1/tours/:id",
@@ -203,7 +229,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "5c88fa8cf4afda39709c296c"
+									"value": "67af73d1dede0e11821be531"
 								}
 							]
 						}
@@ -598,7 +624,7 @@
 							"variable": [
 								{
 									"key": "id",
-									"value": "67a69e0f1f20d06bd51f53a4"
+									"value": "67aec798e16c33f05349d7c0"
 								}
 							]
 						}
@@ -621,13 +647,19 @@
 						"method": "PATCH",
 						"header": [],
 						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"name\": \"admin\",\n    \"role\": \"user\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "photo",
+									"type": "file",
+									"src": "/Users/kmieshkov/projects/complete-node-bootcamp/4-natours/starter/dev-data/img/updated-male-2.jpg"
+								},
+								{
+									"key": "name",
+									"value": "Leo G. Gillepsie",
+									"type": "text"
 								}
-							}
+							]
 						},
 						"url": {
 							"raw": "{{URL}}/api/v1/users/update-me",
@@ -783,7 +815,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"admin@mailinator.com\"\n}",
+							"raw": "{\n    \"email\": \"test1234@mailnator.com\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -802,7 +834,7 @@
 								"forgot-password"
 							]
 						},
-						"description": "Send your email in the body of this request as 'raw' and 'JSON'. You will immediately receive an email with a link to reset your password. The link will expire in 10 minutes, so please act quickly.\n"
+						"description": "Send your email in the body of this request as 'raw' and 'JSON'. You will immediately receive an email with a link to reset your password. The link will expire in 10 minutes, so please act quickly.\n\nMake sure the Postman environment is set to **Prod: Natours** for this request to work."
 					},
 					"response": []
 				},
@@ -828,7 +860,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "// {\n//     \"email\": \"loulou@example.com\",\n//     \"password\": \"{{password}}\"\n// }\n{\n    \"email\": \"admin@voyage.io\",\n    \"password\": \"{{password}}\"\n}",
+							"raw": "// {\n//     \"email\": \"loulou@example.com\",\n//     \"password\": \"{{password}}\"\n// }\n{\n    \"email\": \"admin@voyage.io\",\n    \"password\": \"{{password}}\"\n}\n// {\n//     \"email\": \"leo@example.com\",\n//     \"password\": \"{{password}}\"\n// }",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -872,7 +904,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"<div>user-test</div>\",\n    \"email\": \"yser-test@mailinator.com\",\n    \"password\": \"qwerty12345\",\n    \"passwordConfirm\": \"qwerty12345\",\n    \"role\": \"user\"\n}",
+							"raw": "{\n    \"name\": \"Test User\",\n    \"email\": \"test1234@mailinator.com\",\n    \"password\": \"test1234\",\n    \"passwordConfirm\": \"test1234\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1275,6 +1307,113 @@
 									"value": "4",
 									"disabled": true
 								}
+							],
+							"variable": [
+								{
+									"key": "tourId",
+									"value": "5c88fa8cf4afda39709c2955"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Bookings",
+			"item": [
+				{
+					"name": "Get All Bookings",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/bookings",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"bookings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get One Booking",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/bookings/:id",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"bookings",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "67b0d6d7b75cd4e5236d27b7"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Checkout Session",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/api/v1/bookings/checkout-session/:tourId",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"bookings",
+								"checkout-session",
+								":tourId"
 							],
 							"variable": [
 								{
