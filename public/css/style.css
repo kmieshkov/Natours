@@ -749,7 +749,7 @@ body {
 }
 
 .footer {
-  background-color: #f7f7f7;
+  background-color: #eaeaea;
   padding: 6rem 4rem 3rem 4rem;
   font-size: 1.4rem;
   display: grid;
@@ -1298,6 +1298,10 @@ body {
     max-width: 18rem;
   }
 
+  .nav--tours {
+    margin-top: 1rem;
+  }
+
   /* Main Content */
   .main {
     padding: 20px;
@@ -1379,20 +1383,6 @@ body {
     gap: 10px;
     align-items: flex-start;
   }
-
-  .footer {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 2rem 6rem;
-  }
-
-  .footer__nav {
-    display: flex;
-    flex-direction: column;
-    align-self: start;
-  }
 }
 
 /*  Mobile Responsive Styles */
@@ -1468,7 +1458,7 @@ body {
   }
 
   .footer {
-    padding: 2rem 4rem;
+    padding: 0 1rem;
   }
 
   .footer__nav {
