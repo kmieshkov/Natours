@@ -4,6 +4,7 @@ import '@babel/polyfill';
 import { displayMap } from './mapbox';
 import { login, logout } from './login';
 import { updateSettings } from './updateSettings';
+import { bookTour } from './stripe';
 
 // DOM ELEMENTS
 const sectionMap = document.querySelector('.section-map');
@@ -14,6 +15,7 @@ const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
 const photo = document.getElementById('photo');
 const userImg = document.querySelector('.form__user-photo');
+const bookBtn = document.getElementById('book-tour');
 
 // DELEGATION
 if (sectionMap && mapbox) {
@@ -91,4 +93,15 @@ if (userPasswordForm) {
 
 if (logoutBtn) {
   logoutBtn.addEventListener('click', logout);
+}
+
+if (bookBtn) {
+  bookBtn.addEventListener('click', async (e) => {
+    const tmpBtnText = e.target.textContent;
+    e.target.textContent = 'Processing...';
+
+    const { tourId } = e.target.dataset;
+    await bookTour(tourId);
+    e.target.textContent = tmpBtnText;
+  });
 }
