@@ -5,6 +5,7 @@ import { displayMap } from './mapbox';
 import { login, logout, signup } from './login';
 import { updateSettings } from './updateSettings';
 import { bookTour } from './stripe';
+import { showAlert } from './alerts';
 
 // DOM ELEMENTS
 const sectionMap = document.querySelector('.section-map');
@@ -17,6 +18,7 @@ const userPasswordForm = document.querySelector('.form-user-password');
 const photo = document.getElementById('photo');
 const userImg = document.querySelector('.form__user-photo');
 const bookBtn = document.getElementById('book-tour');
+const alertMessage = document.querySelector('body').dataset.alert;
 
 // DELEGATION
 if (sectionMap && mapbox) {
@@ -119,4 +121,8 @@ if (bookBtn) {
     await bookTour(tourId);
     e.target.textContent = tmpBtnText;
   });
+}
+
+if (alertMessage) {
+  showAlert('success', alertMessage, 7);
 }

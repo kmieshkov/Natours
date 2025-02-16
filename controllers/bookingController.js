@@ -13,12 +13,20 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
     mode: 'payment',
-    // Commented - secure solution implemented after deploying to production
-    // success_url:
-    //   `${req.protocol}://${req.get('host')}/` +
-    //   `?tour=${req.params.tourId}&user=${req.user.id}&price=${tour.price}`,
-    success_url: `${req.protocol}://${req.get('host')}/my-tours`,
-    cancel_url: `${req.protocol}://${req.get('host')}/tour/${tour.slug}`,
+    success_url:
+      // Commented - secure solution implemented after deploying to production
+      // success_url:
+      //   `${req.protocol}://${req.get('host')}/` +
+      //   `?tour=${req.params.tourId}&user=${req.user.id}&price=${tour.price}`,
+
+      process.env.NODE_ENV === 'development'
+        ? `${req.protocol}://localhost:${process.env.PORT}/my-tours?alert=booking`
+        : `${req.protocol}://${req.get('host')}/my-tours?alert=booking`,
+    cancel_url:
+      process.env.NODE_ENV === 'development'
+        ? `${req.protocol}://localhost:${process.env.PORT}/tour/${tour.slug}`
+        : `${req.protocol}://${req.get('host')}/tour/${tour.slug}`,
+
     customer_email: req.user.email,
     client_reference_id: req.params.tourId,
     line_items: [
@@ -31,7 +39,10 @@ exports.getCheckoutSession = catchAsync(async (req, res, next) => {
             name: `${tour.name} Tour`,
             description: tour.summary,
             // Example site: https://www.natours.dev,
-            images: [`https://voyage-lemon.vercel.app/img/tours/${tour.imageCover}`],
+            images:
+              process.env.NODE_ENV === 'development'
+                ? [`https://www.natours.dev/img/tours/${tour.imageCover}`]
+                : [`${req.protocol}://${req.get('host')}/img/tours/${tour.imageCover}`],
           },
         },
       },

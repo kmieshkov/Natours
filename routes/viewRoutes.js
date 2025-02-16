@@ -5,6 +5,8 @@ const authController = require('../controllers/authController');
 
 const router = express.Router();
 
+router.use(viewController.alerts);
+
 router.get('/profile', authController.protect, viewController.getAccount);
 router.post('/submit-user-data', authController.protect, viewController.updateUserData);
 router.get('/my-tours', authController.protect, viewController.getMyTours);
