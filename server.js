@@ -42,3 +42,13 @@ process.on('unhandledRejection', (err) => {
     process.exit(1);
   });
 });
+
+// Listen for SIGTERM signal from process managers like Kubernetes or Heroku to shut down gracefully
+process.on('SIGTERM', () => {
+  console.log('SIGTERM RECEIVED! Shutting down gracefully');
+
+  // Close the server to stop accepting new requests and allow ongoing requests to complete
+  server.close(() => {
+    console.log('💥 Process terminated!');
+  });
+});
