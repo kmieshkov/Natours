@@ -18,6 +18,7 @@ const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
 const viewRouter = require('./routes/viewRoutes');
 const bookingRouter = require('./routes/bookingRoutes');
+const bookingController = require('./controllers/bookingController');
 
 const app = express();
 
@@ -56,6 +57,14 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP. Please try again in an hour!',
 });
 app.use('/api', limiter);
+
+// Data need to be received in raw format
+// That's why webhook API should be located before espress.json() middleware
+app.post(
+  '/webhook-checkout',
+  express.raw({ type: 'application/json' }),
+  bookingController.webhookCheckout,
+);
 
 // Body parser, reading data from body into req.body. Limit body to 10 kb
 app.use(express.json({ limnit: '10kb' }));
