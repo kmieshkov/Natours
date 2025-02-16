@@ -97,11 +97,7 @@ exports.protect = catchAsync(async (req, res, next) => {
     return next(new AppError('You are not logged in! Please login to get access', 401));
   }
   // 2. Token verification
-  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET).catch(() => false);
-
-  if (!decoded) {
-    return next(new AppError('Error decoding JWT', 401));
-  }
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
   // 3. Check if user who is trying to acces the route still exists
   const currentUser = await User.findById(decoded.id);
