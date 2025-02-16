@@ -32,12 +32,10 @@ export const logout = async () => {
       url: '/api/v1/users/logout',
     });
 
-    if (res.data.status !== 'success') return;
-
     if (window.location.pathname.startsWith('/profile')) {
-      window.location.pathname = '/';
+      location.assign('/');
     } else {
-      window.location.reload(true);
+      location.reload(true);
     }
   } catch (err) {
     showAlert('error', 'Error logging out! Please try again!');
