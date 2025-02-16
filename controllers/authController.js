@@ -94,7 +94,8 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   if (!token) {
-    return next(new AppError('You are not logged in! Please login to get access', 401));
+    return res.redirect('/');
+    // return next(new AppError('You are not logged in! Please login to get access', 401));
   }
   // 2. Token verification
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET).catch(() => false);
@@ -125,33 +126,36 @@ exports.protect = catchAsync(async (req, res, next) => {
 // Only for rendered pages, no errors
 exports.isLoggedIn = catchAsync(async (req, res, next) => {
   const token = req.cookies.jwt;
-  if (token) {
-    try {
-      // 1. Verify token
-      const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET).catch(() => false);
 
-      if (!decoded) {
-        return next();
-      }
+  if (!token) {
+    return next();
+  }
 
-      // 2. Check if user who is trying to acces the rout is still exists
-      const currentUser = await User.findById(decoded.id);
+  try {
+    // 1. Verify token
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET).catch(() => false);
 
-      if (!currentUser) {
-        return next();
-      }
-
-      // 3. Check if user changed password after JWT was issued
-      if (currentUser.changedPasswordAfter(decoded.iat)) {
-        return next();
-      }
-
-      // There is a Logged In user
-      res.locals.user = currentUser; // Each .pug will have access to 'locals'
-      req.user = currentUser;
-    } catch (error) {
+    if (!decoded) {
       return next();
     }
+
+    // 2. Check if user who is trying to acces the rout is still exists
+    const currentUser = await User.findById(decoded.id);
+
+    if (!currentUser) {
+      return next();
+    }
+
+    // 3. Check if user changed password after JWT was issued
+    if (currentUser.changedPasswordAfter(decoded.iat)) {
+      return next();
+    }
+
+    // There is a Logged In user
+    res.locals.user = currentUser; // Each .pug will have access to 'locals'
+    req.user = currentUser;
+  } catch (error) {
+    return next();
   }
   next();
 });
