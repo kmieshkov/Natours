@@ -77,11 +77,11 @@ exports.signin = catchAsync(async (req, res, next) => {
 });
 
 exports.logout = (req, res) => {
-  res.clearCookie('jwt');
-
-  res.status(200).json({
-    status: 'success',
+  res.cookie('jwt', 'loggedout', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
   });
+  res.status(200).json({ status: 'success' });
 };
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -94,8 +94,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   if (!token) {
-    return res.redirect('/');
-    // return next(new AppError('You are not logged in! Please login to get access', 401));
+    return next(new AppError('You are not logged in! Please login to get access', 401));
   }
   // 2. Token verification
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET).catch(() => false);
