@@ -104,7 +104,7 @@ if (userPasswordForm) {
 }
 
 if (logoutBtn) {
-  logoutBtn.addEventListener('click', logout);
+  logoutBtn.addEventListener('click', async () => await logout());
 }
 
 if (bookBtn) {
