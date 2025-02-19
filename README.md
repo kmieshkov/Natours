@@ -8,8 +8,10 @@ This project focuses on building a comprehensive and robust backend-focused appl
 
 ### Live Demo
 
-The application (both frontend and backend) is deployed and accessible at:
-🔗 **[Voyage Express App](https://voyage-3l5r.onrender.com/)** (takes ~1min to warm up since it's a free tier)
+The application is deployed and accessible at:
+
+- 🔗 **[Voyage - Render](https://voyage-3l5r.onrender.com/)** (takes ~1min to warm up since it's a free tier)
+- 🔗 **[Voyage - Vercel](https://voyage-hazel.vercel.app/)** (if Render is not available, however User Photo Upload is not available on Vercel since it's a serverless service)
 
 ### Log In With Existing Account
 
@@ -18,19 +20,12 @@ The application (both frontend and backend) is deployed and accessible at:
 | **Email**    | `loulou@example.com` |
 | **Password** | `test1234`           |
 
-### New Account
-
-| Field        | Requirement           |
-| ------------ | --------------------- |
-| **Email**    | Valid email (burner)  |
-| **Password** | At least 8 characters |
-
 ### Demo Card for Payments
 
 | Field               | Value                         |
 | ------------------- | ----------------------------- |
 | **Card Number**     | 4242 4242 4242 4242           |
-| **Expiration Date** | Any future date (e.g., 12/25) |
+| **Expiration Date** | Any future date (e.g., 12/34) |
 | **CVC**             | Any 3 digits (e.g., 123)      |
 | **ZIP Code**        | Any valid code (e.g., 12345)  |
 
@@ -95,6 +90,6 @@ The following technologies will be used to develop this project:
 
 ## Documentation
 
-[Documentation available here](https://www.postman.com/winter-spaceship-900256/voyage/collection/rpifg12/voyage-travel-app).
+[Postman documentation available here](https://www.postman.com/winter-spaceship-900256/voyage/collection/rpifg12/voyage-travel-app).
 
-Downloadable Collection and Environment Variables files also located in the `postman` directory at the root of the repository.
+Downloadable Collection and Environment Variables files also located in the `./postman` directory.
